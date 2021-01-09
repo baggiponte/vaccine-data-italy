@@ -72,3 +72,6 @@ consegne %>%
   geom_col(aes(fill = area))
 ```
 
+# Will be a problem:
+
+e chi ha ricevuto due somministrazioni?
