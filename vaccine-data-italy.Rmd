@@ -41,16 +41,29 @@ anagrafica
 Let's obtain grouped data:
 
 ```{r}
-anagrafica %>%
+aggregated <-
+  anagrafica %>%
   group_by(data_somministrazione, area) %>%
   summarise(across(where(is.numeric), sum)) %>%
   mutate(totale = sesso_maschile + sesso_femminile) %>%
-  relocate(totale, .after = area) %>%
+  relocate(totale, .after = area)
+
+aggregated %>%
   ggplot(aes(data_somministrazione, totale, col = area)) +
   geom_line()
 ```
 
-And let's plot delivered doses:
+```{r}
+aggregated %>%
+  group_by(area) %>%
+  summarise(totale = sum(totale)) %>%
+  add_row(area = 'ITA',
+          totale = sum(aggregated$totale))
+
+```
+
+
+# Doses Histogram
 
 ```{r}
 consegne %>%
