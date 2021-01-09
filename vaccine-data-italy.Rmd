@@ -8,80 +8,16 @@ output: html_notebook
 
 ```{r, message=FALSE}
 library(tidyverse)
+# needs installing `proj` library on your system!
+library(ggalt) 
 ```
 
 # Data
 
-## Vaccines delivered by region, time series:
-
 ```{r}
-url_consegne <-
-  'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv'
+cumulative_data <- read_csv('data/ita_vaccinations_cumulative_total.csv')
 
-consegne <- read_csv(url_consegne) %>%
-  mutate(area = as.factor(area))
-
-consegne %>% head()
-
-consegne %>%
-  write.csv('data/consegne_serie_storica.csv')
+cumulative_data %>%
+  ggplot() +
+  geom_dumb
 ```
-
-## Vaccinated by age and category, time series
-
-```{r}
-url_anagrafica <-
-  'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
-
-anagrafica <- read_csv(url_anagrafica) %>%
-  mutate(across(c(area, fascia_anagrafica), as.factor))
-
-anagrafica
-
-anagrafica %>%
-  write.csv('data/somministrazioni_anagrafica_serie_storica.csv')
-```
-
-# EDA
-
-Let's obtain grouped data:
-
-```{r}
-aggregated <-
-  anagrafica %>%
-  group_by(data_somministrazione, area) %>%
-  summarise(across(where(is.numeric), sum)) %>%
-  mutate(totale = sesso_maschile + sesso_femminile) %>%
-  relocate(totale, .after = area)
-
-aggregated %>%
-  ggplot(aes(data_somministrazione, totale, col = area)) +
-  geom_line()
-
-aggregated %>%
-  write.csv('data/dati_aggregati_serie_storica.csv')
-```
-
-```{r}
-aggregated %>%
-  group_by(area) %>%
-  summarise(totale = sum(totale)) %>%
-  add_row(area = 'ITA',
-          totale = sum(aggregated$totale)) %>%
-  write.csv('data/somministrazioni_totali.csv')
-
-```
-
-
-# Doses Histogram
-
-```{r}
-consegne %>%
-  filter(area != 'ITA') %>%
-  ggplot(aes(x = data_consegna, y = numero_dosi)) +
-  geom_col(aes(fill = area))
-```
-
-# Will be a problem:
-
-e chi ha ricevuto due somministrazioni?
