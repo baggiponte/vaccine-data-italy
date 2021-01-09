@@ -8,16 +8,33 @@ output: html_notebook
 
 ```{r, message=FALSE}
 library(tidyverse)
-# needs installing `proj` library on your system!
-library(ggalt) 
+# for more plots
+library(ggalt) # needs installing `proj` library on your system!
+
+# for new themes
+# library(ggthemes)
+# library(dslabs)
+# ds_theme_set(theme_fivethirtyeight)
 ```
 
 # Data
 
 ```{r}
-cumulative_data <- read_csv('data/ita_vaccinations_cumulative_total.csv')
+cumulative_data <- read_csv('data/ita_vaccinations_cumulative.csv') %>%
+  mutate(area = as.factor(area))
+
+cumulative_data
 
 cumulative_data %>%
-  ggplot() +
-  geom_dumb
+  filter(area != 'ITA') %>%
+  ggplot(aes(
+    x = vaccinazioni_eseguite,
+    xend = dosi_consegnate,
+    y = area
+  )) +
+  geom_dumbbell(
+    # dot_guide = T, dot_guide_size = 0.15,
+    colour="#a3c4dc", size=1.5, colour_xend="#0e668b"
+  ) +
+  theme_fivethirtyeight()
 ```
