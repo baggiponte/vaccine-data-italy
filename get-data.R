@@ -41,7 +41,24 @@ vaccinations_cumulative_italy <-
   group_by(area) %>%
   summarise(totale = sum(totale)) %>%
   add_row(area = 'ITA',
-          totale = sum(vaccinations_aggregated_data$totale)) 
+          totale = sum(vaccinations_aggregated_data$totale))
+
+cumulative_vaccine_deliveries <-
+  vaccine_deliveries_ita %>%
+  group_by(area) %>%
+  summarise(totale_dosi = sum(numero_dosi)) %>%
+  add_row(
+    area = 'ITA',
+    totale_dosi = sum(.$totale_dosi) # the `.` indicates the file itself!
+  )
 
 vaccinations_cumulative_italy %>%
+  inner_join(cumulative_vaccine_deliveries) %>%
+  rename(
+    vaccinazioni_eseguite = totale,
+    dosi_consegnate = totale_dosi
+  ) %>%
+  mutate(
+    percentuale_somministrata = vaccinazioni_eseguite / dosi_consegnate
+  ) %>%
   write.csv('data/ita_vaccinations_cumulative_total.csv', row.names = F)
