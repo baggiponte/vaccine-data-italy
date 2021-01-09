@@ -12,7 +12,7 @@ library(tidyverse)
 
 # Data
 
-Vaccines delivered by region, time series:
+## Vaccines delivered by region, time series:
 
 ```{r}
 url_consegne <-
@@ -22,6 +22,9 @@ consegne <- read_csv(url_consegne) %>%
   mutate(area = as.factor(area))
 
 consegne %>% head()
+
+consegne %>%
+  write.csv('data/consegne_serie_storica.csv')
 ```
 
 Vaccinated by age and category, time series:
@@ -34,6 +37,9 @@ anagrafica <- read_csv(url_anagrafica) %>%
   mutate(across(c(area, fascia_anagrafica), as.factor))
 
 anagrafica
+
+anagrafica %>%
+  write.csv('data/somministrazioni_anagrafica_serie_storica.csv')
 ```
 
 # EDA
@@ -51,6 +57,9 @@ aggregated <-
 aggregated %>%
   ggplot(aes(data_somministrazione, totale, col = area)) +
   geom_line()
+
+aggregated %>%
+  write.csv('data/dati_aggregati_serie_storica.csv')
 ```
 
 ```{r}
