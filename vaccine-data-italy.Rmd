@@ -1,0 +1,61 @@
+---
+title: "Italy's Vaccination Data"
+author: 'Luca Baggi'
+output: html_notebook
+---
+
+# Packages
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+# Data
+
+Vaccines delivered by region, time series:
+
+```{r}
+url_consegne <-
+  'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv'
+
+consegne <- read_csv(url_consegne) %>%
+  mutate(area = as.factor(area))
+
+consegne %>% head()
+```
+
+Vaccinated by age and category, time series:
+
+```{r}
+url_anagrafica <-
+  'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
+
+anagrafica <- read_csv(url_anagrafica) %>%
+  mutate(across(c(area, fascia_anagrafica), as.factor))
+
+anagrafica
+```
+
+# EDA
+
+Let's obtain grouped data:
+
+```{r}
+anagrafica %>%
+  group_by(data_somministrazione, area) %>%
+  summarise(across(where(is.numeric), sum)) %>%
+  mutate(totale = sesso_maschile + sesso_femminile) %>%
+  relocate(totale, .after = area) %>%
+  ggplot(aes(data_somministrazione, totale, col = area)) +
+  geom_line()
+```
+
+And let's plot delivered doses:
+
+```{r}
+consegne %>%
+  filter(area != 'ITA') %>%
+  ggplot(aes(x = data_consegna, y = numero_dosi)) +
+  geom_col(aes(fill = area))
+```
+
