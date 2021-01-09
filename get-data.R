@@ -9,7 +9,7 @@ vaccine_deliveries_ita <- read_csv(url_vaccine_deliveries_ita) %>%
   mutate(area = as.factor(area))
 
 vaccine_deliveries_ita %>%
-  write.csv('data/ita_vaccine_deliveries.csv')
+  write.csv('data/ita_vaccine_deliveries.csv', row.names = F)
 
 # Vaccinations Data by Demography ####
 
@@ -20,7 +20,7 @@ vaccininations_demographic_data <- read_csv(url_vaccininations_demographic_data)
   mutate(across(c(area, fascia_anagrafica), as.factor))
 
 vaccininations_demographic_data %>%
-  write.csv('data/ita_vaccinations_demographic_data.csv')
+  write.csv('data/ita_vaccinations_demographic_data.csv', row.names = F)
 
 # Aggregate Vaccinations Data ####
 
@@ -32,7 +32,7 @@ vaccinations_aggregated_data <-
   relocate(totale, .after = area)
 
 vaccinations_aggregated_data %>%
-  write.csv('data/ita_vaccinations_aggregated_data.csv')
+  write.csv('data/ita_vaccinations_aggregated_data.csv', row.names = F)
 
 # Cumulative Data ####
 
@@ -44,4 +44,4 @@ vaccinations_cumulative_italy <-
           totale = sum(vaccinations_aggregated_data$totale)) 
 
 vaccinations_cumulative_italy %>%
-  write.csv('data/ita_vaccinations_cumulative_total.csv')
+  write.csv('data/ita_vaccinations_cumulative_total.csv', row.names = F)
