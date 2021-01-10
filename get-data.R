@@ -114,5 +114,5 @@ ita_totals_by_area %>%
   relocate(popolazione_2020, .after = area) %>%
   relocate(dosi_ogni_mille, .after = totale_vaccinati) %>%
   relocate(vaccini_ogni_mille, .after = dosi_ogni_mille) %>%
-  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille) %>%
+  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille)
   write.csv('data/ita_totals_by_area.csv', row.names = F)
