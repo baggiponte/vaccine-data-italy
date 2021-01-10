@@ -3,3 +3,8 @@
 .RData
 .Ruserdata
 .DS_Store
+renv
+test
+renv.lock
+.Rprofile
+vaccine-data-italy.Rproj
