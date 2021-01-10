@@ -5,30 +5,33 @@ library(tidyverse)
 url_vaccine_deliveries_ita <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv'
 
-vaccine_deliveries_ita <- read_csv(url_vaccine_deliveries_ita) %>%
-  mutate(area = as.factor(area))
+read_csv(url_vaccine_deliveries_ita) %>%
+  mutate(area = as.factor(area)) -> vaccine_deliveries_ita
 
 vaccine_deliveries_ita %>%
   write.csv('data/ita_vaccine_deliveries.csv', row.names = F)
 
 # Vaccinations Data by Demography ####
 
-url_vaccininations_demographic_data <-
+url_vaccinations_demographic_data <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
 
-vaccininations_demographic_data <- read_csv(url_vaccininations_demographic_data) %>%
-  mutate(across(c(area, fascia_anagrafica), as.factor))
+read_csv(url_vaccinations_demographic_data) %>%
+  mutate(across(c(area, fascia_anagrafica), as.factor)) -> 
+  vaccinations_demographic_data
 
-vaccininations_demographic_data %>%
+vaccinations_demographic_data %>%
   write.csv('data/ita_vaccinations_per_age_range.csv', row.names = F)
 
 # Aggregate Vaccinations Data ####
 
 vaccinations_aggregated_data <-
-  vaccininations_demographic_data %>%
+  vaccinations_demographic_data %>%
   group_by(data_somministrazione, area) %>%
   summarise(across(where(is.numeric), sum)) %>%
-  mutate(totale = sesso_maschile + sesso_femminile) %>%
+  mutate(
+    totale = sesso_maschile + sesso_femminile,
+  ) %>%
   relocate(totale, .after = area)
 
 vaccinations_aggregated_data %>%
