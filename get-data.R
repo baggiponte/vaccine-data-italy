@@ -1,94 +1,118 @@
 library(tidyverse)
 
-# Vaccine Deliveries ####
+# Vaccine deliveries data ####
 
-url_vaccine_deliveries_ita <-
+url_ita_doses_delivered <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv'
 
-read_csv(url_vaccine_deliveries_ita) %>%
-  mutate(area = as.factor(area)) -> vaccine_deliveries_ita
+read_csv(url_ita_doses_delivered) %>%
+  mutate(area = as.factor(area)) -> ita_doses_delivered
 
-vaccine_deliveries_ita %>%
-  write.csv('data/ita_vaccine_deliveries.csv', row.names = F)
+ita_doses_delivered %>%
+  write.csv('data/ita_doses_delivered.csv', row.names = F)
 
-# Vaccinations Data by Demography ####
+# Vaccinations data by age range and area ####
 
-url_vaccinations_demographic_data <-
+url_ita_data <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
 
-read_csv(url_vaccinations_demographic_data) %>%
-  mutate(across(c(area, fascia_anagrafica), as.factor)) -> 
-  vaccinations_demographic_data
+read_csv(url_ita_data) %>%
+  mutate(across(c(area, fascia_anagrafica), as.factor)) %>%
+  rename_with( ~ str_remove(.x, 'categoria_')) -> 
+  ita_data
 
-vaccinations_demographic_data %>%
-  write.csv('data/ita_vaccinations_per_age_range.csv', row.names = F)
+ita_data %>%
+  write.csv('data/ita_data.csv', row.names = F)
 
-# Aggregate Vaccinations Data ####
 
-vaccinations_aggregated_data <-
-  vaccinations_demographic_data %>%
+#####
+
+# Data aggregated by area ####
+
+ita_data %>%
   group_by(data_somministrazione, area) %>%
   summarise(across(where(is.numeric), sum)) %>%
   mutate(
-    totale = sesso_maschile + sesso_femminile,
+    nuovi_vaccinati = sesso_maschile + sesso_femminile,
   ) %>%
-  relocate(totale, .after = area)
+  relocate(nuovi_vaccinati, .after = area) ->
+  ita_aggregated_by_area
 
-vaccinations_aggregated_data %>%
-  write.csv('data/ita_vaccinations_aggregated.csv', row.names = F)
+ita_aggregated_by_area %>%
+  write.csv('data/ita_aggregated_by_area.csv', row.names = F)
 
-# Cumulative Vaccination Data ####
+# Data aggregated by age range ####
 
-vaccinations_cumulative_italy <-
-  vaccinations_aggregated_data %>%
+ita_data %>%
+  group_by(data_somministrazione, fascia_anagrafica) %>%
+  summarise(across(where(is.numeric), sum)) %>%
+  mutate(
+    nuovi_vaccinati = sesso_maschile + sesso_femminile,
+  ) %>%
+  relocate(nuovi_vaccinati, .after = fascia_anagrafica) ->
+  ita_aggregated_by_age_range
+
+ita_aggregated_by_age_range %>%
+  write.csv('data/ita_aggregated_by_age_range.csv', row.names = F)
+
+# Totals by age range ####
+
+ita_aggregated_by_age_range %>%
+  group_by(fascia_anagrafica) %>%
+  summarise(across(where(is.numeric), sum)) ->
+  ita_totals_by_age_range
+
+ita_totals_by_age_range %>%
+  write.csv('data/ita_totals_by_age_range.csv', row.names = F) 
+
+# Totals by area ####
+
+ita_aggregated_by_area %>%
   group_by(area) %>%
-  summarise(totale = sum(totale)) %>%
+  summarise(across(where(is.numeric), sum)) %>%
+  rename(totale_vaccinati = nuovi_vaccinati) %>%
   add_row(area = 'ITA',
-          totale = sum(.$totale)) # the `.` indicates the file itself!
+          # the `.` indicates the object itself!
+          totale_vaccinati = sum(.$totale_vaccinati),
+          sesso_maschile = sum(.$sesso_maschile),
+          sesso_femminile = sum(.$sesso_femminile),
+          operatori_sanitari_sociosanitari = sum(.$operatori_sanitari_sociosanitari),
+          personale_non_sanitario = sum(.$personale_non_sanitario),
+          ospiti_rsa = sum(.$ospiti_rsa),
+  ) -> ita_totals_by_area
 
-# Create two new columns for cumulative data ####
+
+#####
+
+# Regional population data ####
+
+population_data <- read_csv('data/regions_population.csv')
 
 # group_by of vaccine deliveries data
-cumulative_vaccine_deliveries <-
-  vaccine_deliveries_ita %>%
+ita_doses_delivered %>%
   group_by(area) %>%
   summarise(totale_dosi = sum(numero_dosi)) %>%
+  inner_join(population_data, by = 'area') %>%
+  relocate(nome) %>%
   add_row(
+    nome = 'Italia',
     area = 'ITA',
-    totale_dosi = sum(.$totale_dosi) 
-  )
-
-# retrieve regional population data thanks to OnData:
-
-url_regions_population <-
-  'https://raw.githubusercontent.com/ondata/covid19italia/master/webservices/vaccini/risorse/popolazioneRegioni.csv'
-
-regions_population <-
-  read_csv(url_regions_population) %>%
-  # order them before making an unorthodox merge
-  arrange(Name) %>%
-  bind_cols(
-    # since they are both sorted, add this column from another dataset
-    cumulative_vaccine_deliveries[1:21, 1]
-  ) %>%
-  select(area, OBS_VALUE) %>%
-  add_row(
-    area= 'ITA',
-    OBS_VALUE = sum(.$OBS_VALUE)
-  ) %>%
-  rename(popolazione_2020 = OBS_VALUE)
-
-
-# append vaccine deliveries data
-vaccinations_cumulative_italy %>%
-  inner_join(cumulative_vaccine_deliveries, by = 'area') %>%
-  inner_join(regions_population, by = 'area') %>%
-  rename(
-    vaccinazioni_eseguite = totale,
-    dosi_consegnate = totale_dosi
-  ) %>%
+    totale_dosi = sum(.$totale_dosi),
+    popolazione_2020 = sum(.$popolazione_2020)
+  ) -> ita_total_doses_delivered
+  
+ita_totals_by_area %>%
+  inner_join(ita_total_doses_delivered, by = 'area') %>%
+  relocate(nome) %>%
+  relocate(popolazione_2020, .after = area) %>%
+  relocate(totale_dosi, .after = popolazione_2020) %>%
   mutate(
-    percentuale_somministrata = round(vaccinazioni_eseguite / dosi_consegnate, digits = 2),
-    vaccinati_su_centomila = round(vaccinazioni_eseguite / popolazione_2020, digits = 3) * 100000
+    dosi_ogni_mille = round(totale_dosi / popolazione_2020 * 1000, digits = 2),
+    vaccini_ogni_mille = round(totale_vaccinati / popolazione_2020 * 1000, digits = 2),
+    percent_vaccini_somministrati = round(totale_vaccinati / totale_dosi, digits = 2),
   ) %>%
-  write.csv('data/ita_vaccinations_cumulative.csv', row.names = F)
+  relocate(popolazione_2020, .after = area) %>%
+  relocate(dosi_ogni_mille, .after = totale_vaccinati) %>%
+  relocate(vaccini_ogni_mille, .after = dosi_ogni_mille) %>%
+  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille) %>%
+  write.csv('data/ita_totals_by_area.csv', row.names = F)

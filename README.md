@@ -19,3 +19,4 @@ In particular, as of now we are using (or planning to) the following data they m
 * Italy's shapefiles in the EU's official [NUTS format](https://github.com/ondata/nuts) (Italian only).
 	* This very same data is also available on [another repository](https://github.com/ondata/covid19italia) of theirs: `covid19italia/risorse/fileGeografici` (Italian only).
 * Population data comes from the same repo as the one immediately above, but the file is `covid19italia/webservices/vaccini/risorse/popolazioneRegioni`.
+* [This file](https://github.com/ondata/covid19italia/blob/master/webservices/vaccini/risorse/codiciTerritoriali.csv) in the directory `covid19italia/webservices/vaccini/risorse/` by Ondata provides a reference for all regional codes and their names: vital to do any kind of join by area.

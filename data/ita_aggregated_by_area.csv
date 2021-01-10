@@ -1,4 +1,4 @@
-"data_somministrazione","area","totale","sesso_maschile","sesso_femminile","categoria_operatori_sanitari_sociosanitari","categoria_personale_non_sanitario","categoria_ospiti_rsa"
+"data_somministrazione","area","nuovi_vaccinati","sesso_maschile","sesso_femminile","operatori_sanitari_sociosanitari","personale_non_sanitario","ospiti_rsa"
 2020-12-27,"ABR",135,71,64,115,18,2
 2020-12-27,"BAS",208,83,125,208,0,0
 2020-12-27,"CAL",274,147,127,272,2,0
