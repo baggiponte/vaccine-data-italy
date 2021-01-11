@@ -7,4 +7,4 @@ renv
 test
 renv.lock
 .Rprofile
-vaccine-data-italy.Rproj
+*.Rproj
