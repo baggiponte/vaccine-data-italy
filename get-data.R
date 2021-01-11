@@ -59,7 +59,8 @@ ita_aggregated_by_age_range %>%
 
 ita_aggregated_by_age_range %>%
   group_by(fascia_anagrafica) %>%
-  summarise(across(where(is.numeric), sum)) ->
+  summarise(across(where(is.numeric), sum)) %>%
+  rename(totale_vaccinati = nuovi_vaccinati) ->
   ita_totals_by_age_range
 
 ita_totals_by_age_range %>%
@@ -79,7 +80,7 @@ ita_aggregated_by_area %>%
           operatori_sanitari_sociosanitari = sum(.$operatori_sanitari_sociosanitari),
           personale_non_sanitario = sum(.$personale_non_sanitario),
           ospiti_rsa = sum(.$ospiti_rsa),
-  ) -> ita_totals_by_area
+  ) -> ita_quasi_totals
 
 
 #####
@@ -101,7 +102,7 @@ ita_doses_delivered %>%
     popolazione_2020 = sum(.$popolazione_2020)
   ) -> ita_total_doses_delivered
   
-ita_totals_by_area %>%
+ita_quasi_totals %>%
   inner_join(ita_total_doses_delivered, by = 'area') %>%
   relocate(nome) %>%
   relocate(popolazione_2020, .after = area) %>%
@@ -114,5 +115,8 @@ ita_totals_by_area %>%
   relocate(popolazione_2020, .after = area) %>%
   relocate(dosi_ogni_mille, .after = totale_vaccinati) %>%
   relocate(vaccini_ogni_mille, .after = dosi_ogni_mille) %>%
-  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille) %>%
+  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille) ->
+  ita_totals_by_area
+
+ita_totals_by_area %>%
   write_csv('data/ita_totals_by_area.csv')
