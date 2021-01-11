@@ -16,4 +16,4 @@ read_csv(url_regions_population) %>%
     area = siglaRegione,
     popolazione_2020 = OBS_VALUE
   ) %>%
-  write.csv('data/regions_population.csv', row.names = F)
+  write_csv('data/regions_population.csv')

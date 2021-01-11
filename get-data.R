@@ -9,7 +9,7 @@ read_csv(url_ita_doses_delivered) %>%
   mutate(area = as.factor(area)) -> ita_doses_delivered
 
 ita_doses_delivered %>%
-  write.csv('data/ita_doses_delivered.csv', row.names = F)
+  write_csv('data/ita_doses_delivered.csv')
 
 # Vaccinations data by age range and area ####
 
@@ -22,7 +22,7 @@ read_csv(url_ita_data) %>%
   ita_data
 
 ita_data %>%
-  write.csv('data/ita_data.csv', row.names = F)
+  write_csv('data/ita_data.csv')
 
 
 #####
@@ -39,7 +39,7 @@ ita_data %>%
   ita_aggregated_by_area
 
 ita_aggregated_by_area %>%
-  write.csv('data/ita_aggregated_by_area.csv', row.names = F)
+  write_csv('data/ita_aggregated_by_area.csv')
 
 # Data aggregated by age range ####
 
@@ -53,7 +53,7 @@ ita_data %>%
   ita_aggregated_by_age_range
 
 ita_aggregated_by_age_range %>%
-  write.csv('data/ita_aggregated_by_age_range.csv', row.names = F)
+  write_csv('data/ita_aggregated_by_age_range.csv')
 
 # Totals by age range ####
 
@@ -63,7 +63,7 @@ ita_aggregated_by_age_range %>%
   ita_totals_by_age_range
 
 ita_totals_by_age_range %>%
-  write.csv('data/ita_totals_by_age_range.csv', row.names = F) 
+  write_csv('data/ita_totals_by_age_range.csv') 
 
 # Totals by area ####
 
@@ -114,5 +114,5 @@ ita_totals_by_area %>%
   relocate(popolazione_2020, .after = area) %>%
   relocate(dosi_ogni_mille, .after = totale_vaccinati) %>%
   relocate(vaccini_ogni_mille, .after = dosi_ogni_mille) %>%
-  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille)
-  write.csv('data/ita_totals_by_area.csv', row.names = F)
+  relocate(percent_vaccini_somministrati, .after = vaccini_ogni_mille) %>%
+  write_csv('data/ita_totals_by_area.csv')
