@@ -23,7 +23,9 @@ url_ita_data <-
 
 read_csv(url_ita_data) %>%
   mutate(across(c(area, fascia_anagrafica), as.factor)) %>%
-  rename_with( ~ str_remove(.x, 'categoria_')) -> 
+  rename_with( ~ str_remove(.x, 'categoria_')) %>%
+  mutate(nuovi_vaccinati = sesso_maschile + sesso_femminile) %>%
+  relocate(nuovi_vaccinati, .after = 'fascia_anagrafica') -> 
   ita_data
 
 ita_data %>%
@@ -37,9 +39,6 @@ ita_data %>%
 ita_data %>%
   group_by(data_somministrazione, area) %>%
   summarise(across(where(is.numeric), sum)) %>%
-  mutate(
-    nuovi_vaccinati = sesso_maschile + sesso_femminile,
-  ) %>%
   relocate(nuovi_vaccinati, .after = area) %>%
   group_by(area) %>%
   mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) ->
@@ -53,9 +52,6 @@ ita_aggregated_by_area %>%
 ita_data %>%
   group_by(data_somministrazione, fascia_anagrafica) %>%
   summarise(across(where(is.numeric), sum)) %>%
-  mutate(
-    nuovi_vaccinati = sesso_maschile + sesso_femminile,
-  ) %>%
   relocate(nuovi_vaccinati, .after = fascia_anagrafica) %>%
   group_by(fascia_anagrafica) %>%
   mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) ->
