@@ -41,7 +41,8 @@ ita_data %>%
   summarise(across(where(is.numeric), sum)) %>%
   relocate(nuovi_vaccinati, .after = area) %>%
   group_by(area) %>%
-  mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) ->
+  mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) %>%
+  arrange(area) ->
   ita_aggregated_by_area
 
 ita_aggregated_by_area %>%
