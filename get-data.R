@@ -24,6 +24,7 @@ url_ita_data <-
 read_csv(url_ita_data) %>%
   mutate(across(c(area, fascia_anagrafica), as.factor)) %>%
   rename_with( ~ str_remove(.x, 'categoria_')) %>%
+  rename(operatori_sanitari = operatori_sanitari_sociosanitari) %>%
   mutate(nuovi_vaccinati = sesso_maschile + sesso_femminile) %>%
   relocate(nuovi_vaccinati, .after = 'fascia_anagrafica') -> 
   ita_data
@@ -42,6 +43,7 @@ ita_data %>%
   relocate(nuovi_vaccinati, .after = area) %>%
   group_by(area) %>%
   mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) %>%
+  rename(vaccinati_totale = nuovi_vaccinati_totale) %>%
   arrange(area) ->
   ita_aggregated_by_area
 
@@ -55,7 +57,8 @@ ita_data %>%
   summarise(across(where(is.numeric), sum)) %>%
   relocate(nuovi_vaccinati, .after = fascia_anagrafica) %>%
   group_by(fascia_anagrafica) %>%
-  mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) ->
+  mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) %>%
+  rename(vaccinati_totale = nuovi_vaccinati_totale) ->
   ita_aggregated_by_age_range
 
 ita_aggregated_by_age_range %>%
@@ -85,7 +88,7 @@ ita_aggregated_by_area %>%
           totale_vaccinati = sum(.$totale_vaccinati),
           sesso_maschile = sum(.$sesso_maschile),
           sesso_femminile = sum(.$sesso_femminile),
-          operatori_sanitari_sociosanitari = sum(.$operatori_sanitari_sociosanitari),
+          operatori_sanitari = sum(.$operatori_sanitari),
           personale_non_sanitario = sum(.$personale_non_sanitario),
           ospiti_rsa = sum(.$ospiti_rsa),
   ) -> ita_quasi_totals

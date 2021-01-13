@@ -1,4 +1,4 @@
-data_somministrazione,area,fascia_anagrafica,nuovi_vaccinati,sesso_maschile,sesso_femminile,operatori_sanitari_sociosanitari,personale_non_sanitario,ospiti_rsa
+data_somministrazione,area,fascia_anagrafica,nuovi_vaccinati,sesso_maschile,sesso_femminile,operatori_sanitari,personale_non_sanitario,ospiti_rsa
 2020-12-27,ABR,16-19,0,0,0,0,0,0
 2020-12-27,ABR,20-29,5,1,4,5,0,0
 2020-12-27,ABR,30-39,16,5,11,16,0,0

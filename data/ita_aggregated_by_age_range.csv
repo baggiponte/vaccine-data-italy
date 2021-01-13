@@ -1,4 +1,4 @@
-data_somministrazione,fascia_anagrafica,nuovi_vaccinati,sesso_maschile,sesso_femminile,operatori_sanitari_sociosanitari,personale_non_sanitario,ospiti_rsa,nuovi_vaccinati_totale,sesso_maschile_totale,sesso_femminile_totale,operatori_sanitari_sociosanitari_totale,personale_non_sanitario_totale,ospiti_rsa_totale
+data_somministrazione,fascia_anagrafica,nuovi_vaccinati,sesso_maschile,sesso_femminile,operatori_sanitari,personale_non_sanitario,ospiti_rsa,vaccinati_totale,sesso_maschile_totale,sesso_femminile_totale,operatori_sanitari_totale,personale_non_sanitario_totale,ospiti_rsa_totale
 2020-12-27,16-19,50,37,13,50,0,0,50,37,13,50,0,0
 2020-12-27,20-29,696,245,451,642,53,1,696,245,451,642,53,1
 2020-12-27,30-39,1089,488,601,1025,64,0,1089,488,601,1025,64,0

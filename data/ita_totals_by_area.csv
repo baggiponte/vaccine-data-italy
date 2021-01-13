@@ -1,4 +1,4 @@
-nome,area,popolazione_2020,totale_dosi,totale_vaccinati,dosi_ogni_mille,vaccini_ogni_mille,percent_vaccini_somministrati,sesso_maschile,sesso_femminile,operatori_sanitari_sociosanitari,personale_non_sanitario,ospiti_rsa,NUTS2
+nome,area,popolazione_2020,totale_dosi,totale_vaccinati,dosi_ogni_mille,vaccini_ogni_mille,percent_vaccini_somministrati,sesso_maschile,sesso_femminile,operatori_sanitari,personale_non_sanitario,ospiti_rsa,NUTS2
 Abruzzo,ABR,1293941,24510,15428,18.94,11.92,0.63,5598,9830,14547,619,262,ITF1
 Basilicata,BAS,553254,11805,4787,21.34,8.65,0.41,1985,2802,4363,207,217,ITF5
 Calabria,CAL,1894110,39280,13681,20.74,7.22,0.35,6828,6853,12030,1588,63,ITF6

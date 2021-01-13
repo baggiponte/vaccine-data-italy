@@ -1,4 +1,4 @@
-data_somministrazione,area,nuovi_vaccinati,sesso_maschile,sesso_femminile,operatori_sanitari_sociosanitari,personale_non_sanitario,ospiti_rsa,nuovi_vaccinati_totale,sesso_maschile_totale,sesso_femminile_totale,operatori_sanitari_sociosanitari_totale,personale_non_sanitario_totale,ospiti_rsa_totale
+data_somministrazione,area,nuovi_vaccinati,sesso_maschile,sesso_femminile,operatori_sanitari,personale_non_sanitario,ospiti_rsa,vaccinati_totale,sesso_maschile_totale,sesso_femminile_totale,operatori_sanitari_totale,personale_non_sanitario_totale,ospiti_rsa_totale
 2020-12-27,ABR,135,71,64,115,18,2,135,71,64,115,18,2
 2021-01-02,ABR,550,218,332,545,5,0,685,289,396,660,23,2
 2021-01-03,ABR,564,219,345,556,8,0,1249,508,741,1216,31,2
