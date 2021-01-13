@@ -6,7 +6,12 @@ url_ita_doses_delivered <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv'
 
 read_csv(url_ita_doses_delivered) %>%
-  mutate(area = as.factor(area)) -> ita_doses_delivered
+  rename(dosi_consegnate = numero_dosi) %>%
+  relocate(data_consegna, .after = 'area') %>%
+  mutate(area = as.factor(area)) %>%
+  group_by(area) %>%
+  mutate(dosi_totali = cumsum(dosi_consegnate)) ->
+  ita_doses_delivered
 
 ita_doses_delivered %>%
   write_csv('data/ita_doses_delivered.csv')
@@ -35,7 +40,9 @@ ita_data %>%
   mutate(
     nuovi_vaccinati = sesso_maschile + sesso_femminile,
   ) %>%
-  relocate(nuovi_vaccinati, .after = area) ->
+  relocate(nuovi_vaccinati, .after = area) %>%
+  group_by(area) %>%
+  mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) ->
   ita_aggregated_by_area
 
 ita_aggregated_by_area %>%
@@ -49,7 +56,9 @@ ita_data %>%
   mutate(
     nuovi_vaccinati = sesso_maschile + sesso_femminile,
   ) %>%
-  relocate(nuovi_vaccinati, .after = fascia_anagrafica) ->
+  relocate(nuovi_vaccinati, .after = fascia_anagrafica) %>%
+  group_by(fascia_anagrafica) %>%
+  mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) ->
   ita_aggregated_by_age_range
 
 ita_aggregated_by_age_range %>%
@@ -58,6 +67,7 @@ ita_aggregated_by_age_range %>%
 # Totals by age range ####
 
 ita_aggregated_by_age_range %>%
+  select(1:8) %>%
   group_by(fascia_anagrafica) %>%
   summarise(across(where(is.numeric), sum)) %>%
   rename(totale_vaccinati = nuovi_vaccinati) ->
@@ -69,6 +79,7 @@ ita_totals_by_age_range %>%
 # Totals by area ####
 
 ita_aggregated_by_area %>%
+  select(1:8) %>%
   group_by(area) %>%
   summarise(across(where(is.numeric), sum)) %>%
   rename(totale_vaccinati = nuovi_vaccinati) %>%
@@ -92,7 +103,7 @@ population_data <- read_csv('data/regions_population.csv')
 # group_by of vaccine deliveries data
 ita_doses_delivered %>%
   group_by(area) %>%
-  summarise(totale_dosi = sum(numero_dosi)) %>%
+  summarise(totale_dosi = sum(dosi_consegnate)) %>%
   inner_join(population_data, by = 'area') %>%
   relocate(nome) %>%
   add_row(

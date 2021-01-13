@@ -10,7 +10,7 @@ url_regions_population <-
 
 read_csv(url_regions_population) %>%
   inner_join(regional_codes, by = 'Name') %>%
-  select(Name, siglaRegione, OBS_VALUE) %>%
+  select(Name, siglaRegione, NUTS2, OBS_VALUE) %>%
   rename(
     nome = Name,
     area = siglaRegione,
