@@ -8,9 +8,10 @@ url_ita_doses_delivered <-
 read_csv(url_ita_doses_delivered) %>%
   rename(dosi_consegnate = numero_dosi) %>%
   relocate(data_consegna, .after = 'area') %>%
+  rename(data = data_consegna) %>%
   mutate(area = as.factor(area)) %>%
   group_by(area) %>%
-  mutate(dosi_totali = cumsum(dosi_consegnate)) ->
+  mutate(dosi_totale = cumsum(dosi_consegnate)) ->
   ita_doses_delivered
 
 ita_doses_delivered %>%
@@ -24,7 +25,10 @@ url_ita_data <-
 read_csv(url_ita_data) %>%
   mutate(across(c(area, fascia_anagrafica), as.factor)) %>%
   rename_with( ~ str_remove(.x, 'categoria_')) %>%
-  rename(operatori_sanitari = operatori_sanitari_sociosanitari) %>%
+  rename(
+    operatori_sanitari = operatori_sanitari_sociosanitari,
+    data = data_somministrazione
+  ) %>%
   mutate(nuovi_vaccinati = sesso_maschile + sesso_femminile) %>%
   relocate(nuovi_vaccinati, .after = 'fascia_anagrafica') -> 
   ita_data
@@ -38,7 +42,7 @@ ita_data %>%
 # Data aggregated by area ####
 
 ita_data %>%
-  group_by(data_somministrazione, area) %>%
+  group_by(data, area) %>%
   summarise(across(where(is.numeric), sum)) %>%
   relocate(nuovi_vaccinati, .after = area) %>%
   group_by(area) %>%
@@ -53,7 +57,7 @@ ita_aggregated_by_area %>%
 # Data aggregated by age range ####
 
 ita_data %>%
-  group_by(data_somministrazione, fascia_anagrafica) %>%
+  group_by(data, fascia_anagrafica) %>%
   summarise(across(where(is.numeric), sum)) %>%
   relocate(nuovi_vaccinati, .after = fascia_anagrafica) %>%
   group_by(fascia_anagrafica) %>%
