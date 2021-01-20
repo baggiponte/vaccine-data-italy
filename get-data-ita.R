@@ -111,7 +111,7 @@ aggregated_by_area_ita %>%
 
 # Regional population data ####
 
-population_data <- read_csv('data_italy/regions_population.csv')
+population_data <- read_csv('data_italy/population_2020_ita.csv')
 
 # group_by of vaccine deliveries data
 doses_delivered_ita %>%
