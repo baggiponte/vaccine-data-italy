@@ -1,6 +1,6 @@
 library(tidyverse)
 
-# load data
+# load data ####
 
 url_data_ita <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
@@ -16,7 +16,7 @@ read_csv(url_data_ita) %>%
   relocate(nuovi_vaccinati, .after = 'fascia_anagrafica') -> 
   vaccinations_ita
 
-# aggregate data by age range
+# aggregate data by age range ####
 
 vaccinations_ita %>%
   group_by(data, fascia_anagrafica) %>%
