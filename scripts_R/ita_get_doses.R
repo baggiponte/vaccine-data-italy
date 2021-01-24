@@ -1,11 +1,11 @@
-library(tidyverse)
+library(dplyr)
 
 # load data ####
 
 url_doses_delivered_ita <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv'
 
-read_csv(url_doses_delivered_ita, col_types = cols(area = col_factor())) %>%
+readr::read_csv(url_doses_delivered_ita, col_types = readr::cols(area = readr::col_factor())) %>%
   rename(
     dosi_consegnate = numero_dosi,
     data = data_consegna
@@ -14,7 +14,7 @@ read_csv(url_doses_delivered_ita, col_types = cols(area = col_factor())) %>%
   
 # create the grid for filling implicit NAs ####
 
-dates <- expand_grid(
+dates <- tidyr::expand_grid(
   data = seq.Date(from = min(doses$data), to = lubridate::today(tzone = 'UTC'), by = 'day'),
   area = forcats::fct_unique(doses$area)
 )
@@ -23,7 +23,7 @@ dates <- expand_grid(
 
 doses %>%
   # pivot to the wider format
-  pivot_wider(
+  tidyr::pivot_wider(
     # create new features out of the levels of the following column
     names_from = fornitore,
     # values of the new features come from the following column
@@ -50,7 +50,7 @@ doses %>%
 
 # aggregate by area ####
 
-population_data <- read_csv('data_ita/population_2020_ita.csv')
+population_data <- readr::read_csv('data_ita/population_2020_ita.csv')
 
 doses_delivered_ita %>%
   group_by(area) %>%
@@ -93,10 +93,10 @@ doses_delivered_ita %>%
 # save the data #### 
 
 doses_delivered_ita %>%
-  write_csv('data_ita/doses_delivered_ita.csv')
+  readr::write_csv('data_ita/doses_delivered_ita.csv')
 
 doses_by_area_ita %>%
-  write_csv('data_ita/doses_by_area_ita.csv')
+  readr::write_csv('data_ita/doses_by_area_ita.csv')
 
 doses_by_date_ita %>%
-  write_csv('data_ita/doses_by_date_ita.csv')
+  readr::write_csv('data_ita/doses_by_date_ita.csv')

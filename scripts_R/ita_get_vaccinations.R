@@ -1,13 +1,13 @@
-library(tidyverse)
+library(dplyr)
 
 # load data ####
 
 url_data_ita <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
 
-read_csv(url_data_ita) %>%
+readr::read_csv(url_data_ita) %>%
   mutate(across(c(area, fascia_anagrafica), as.factor)) %>%
-  rename_with( ~ str_remove(.x, 'categoria_')) %>%
+  rename_with( ~ stringr::str_remove(.x, 'categoria_')) %>%
   rename(
     operatori_sanitari = operatori_sanitari_sociosanitari,
     data = data_somministrazione
@@ -48,7 +48,7 @@ vaccinations_ita %>%
 
 # load population data
 
-read_csv('data_ita/doses_by_area_ita.csv') -> doses_by_area
+readr::read_csv('data_ita/doses_by_area_ita.csv') -> doses_by_area
 
 vaccinations_by_area_ita %>%
   select(1:11) %>%
@@ -79,14 +79,14 @@ vaccinations_by_area_ita %>%
 # save data ####
 
 vaccinations_ita %>%
-  write_csv('data_ita/vaccinations_ita.csv')
+  readr::write_csv('data_ita/vaccinations_ita.csv')
 
 vaccinations_by_age_ita %>%
-  write_csv('data_ita/vaccinations_by_age_ita.csv')
+  readr::write_csv('data_ita/vaccinations_by_age_ita.csv')
 totals_by_age_ita %>%
-  write_csv('data_ita/totals_by_age_ita.csv')
+  readr::write_csv('data_ita/totals_by_age_ita.csv')
 
 vaccinations_by_area_ita %>%
-  write_csv('data_ita/vaccinations_by_area_ita.csv')
+  readr::write_csv('data_ita/vaccinations_by_area_ita.csv')
 totals_by_area_ita %>%
-  write_csv('data_ita/totals_by_area_ita.csv')
+  readr::write_csv('data_ita/totals_by_area_ita.csv')
