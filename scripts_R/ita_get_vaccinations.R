@@ -6,41 +6,52 @@ url_data_ita <-
   'https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv'
 
 readr::read_csv(url_data_ita) %>%
+  # transform as factors
   mutate(across(c(area, fascia_anagrafica), as.factor)) %>%
+  # remove 'categoria' from several column names
   rename_with( ~ stringr::str_remove(.x, 'categoria_')) %>%
+  # shorten some other variable names
   rename(
     operatori_sanitari = operatori_sanitari_sociosanitari,
     data = data_somministrazione
   ) %>%
+  # create a new column with total vaccinations
   mutate(nuovi_vaccinati = sesso_maschile + sesso_femminile) %>%
-  relocate(nuovi_vaccinati, .after = 'fascia_anagrafica') -> 
+  # reorder columns
+  relocate(nuovi_vaccinati, .after = 'fascia_anagrafica') ->
   vaccinations_ita
+
+# deal with implicitly missing values ####
+
+vaccinations_ita %<>%
+  full_join(vaccinations_ita %>% tidyr::expand(data, area, fornitore, fascia_anagrafica),
+            by = c('data', 'area', 'fornitore', 'fascia_anagrafica')) %>%
+  # sort data
+  arrange(area, data) %>%
+  # replace NAs that popped up  
+  mutate(across(where(is.numeric), ~ tidyr::replace_na(.x, 0)))
 
 # aggregate data by age range ####
 
 vaccinations_ita %>%
-  group_by(data, fascia_anagrafica) %>%
+  group_by(data, fascia_anagrafica, fornitore) %>%
   summarise(across(where(is.numeric), sum)) %>%
-  relocate(nuovi_vaccinati, .after = fascia_anagrafica) %>%
-  group_by(fascia_anagrafica) %>%
   mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) %>%
-  rename(vaccinati_totale = nuovi_vaccinati_totale) ->
-  vaccinations_by_age_ita
+  rename(vaccinati_totale = nuovi_vaccinati_totale) -> vaccinations_by_age_ita
 
 vaccinations_by_age_ita %>%
-  select(1:11) %>%
+  # remove cumulative sums, as they will be obtained via `summarise`:
+  select(1:12) %>%
   group_by(fascia_anagrafica) %>%
   summarise(across(where(is.numeric), sum)) %>%
-  rename(vaccinati_totale = nuovi_vaccinati) ->
-  totals_by_age_ita
+  rename(vaccinati_totale = nuovi_vaccinati) -> totals_by_age_ita
 
 # aggregate data by area ####
 
 vaccinations_ita %>%
-  group_by(data, area) %>%
+  group_by(data, area, fornitore) %>%
   summarise(across(where(is.numeric), sum)) %>%
   relocate(nuovi_vaccinati, .after = area) %>%
-  group_by(area) %>%
   mutate(across(where(is.numeric), list(totale = ~ cumsum(.x)))) %>%
   rename(vaccinati_totale = nuovi_vaccinati_totale) %>%
   arrange(area) ->
@@ -51,7 +62,7 @@ vaccinations_ita %>%
 readr::read_csv('data_ita/doses_by_area_ita.csv') -> doses_by_area
 
 vaccinations_by_area_ita %>%
-  select(1:11) %>%
+  select(1:12, -fornitore) %>%
   group_by(area) %>%
   summarise(across(where(is.numeric), sum)) %>%
   rename(vaccinati_totale = nuovi_vaccinati) %>%
