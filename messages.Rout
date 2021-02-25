@@ -1,0 +1,75 @@
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+[36m──[39m [1m[1mColumn specification[1m[22m [36m────────────────────────────────────────────────────────[39m
+cols(
+  nome = [31mcol_character()[39m,
+  area = [31mcol_character()[39m,
+  NUTS2 = [31mcol_character()[39m,
+  popolazione_2020 = [32mcol_double()[39m
+)
+
+
+[36m──[39m [1m[1mColumn specification[1m[22m [36m────────────────────────────────────────────────────────[39m
+cols(
+  data_somministrazione = [34mcol_date(format = "")[39m,
+  fornitore = [31mcol_character()[39m,
+  area = [31mcol_character()[39m,
+  fascia_anagrafica = [31mcol_character()[39m,
+  sesso_maschile = [32mcol_double()[39m,
+  sesso_femminile = [32mcol_double()[39m,
+  categoria_operatori_sanitari_sociosanitari = [32mcol_double()[39m,
+  categoria_personale_non_sanitario = [32mcol_double()[39m,
+  categoria_ospiti_rsa = [32mcol_double()[39m,
+  categoria_over80 = [32mcol_double()[39m,
+  categoria_forze_armate = [32mcol_double()[39m,
+  categoria_personale_scolastico = [32mcol_double()[39m,
+  prima_dose = [32mcol_double()[39m,
+  seconda_dose = [32mcol_double()[39m,
+  codice_NUTS1 = [31mcol_character()[39m,
+  codice_NUTS2 = [31mcol_character()[39m,
+  codice_regione_ISTAT = [32mcol_double()[39m,
+  nome_area = [31mcol_character()[39m
+)
+
+`summarise()` has grouped output by 'data', 'fascia_anagrafica'. You can override using the `.groups` argument.
+`summarise()` has grouped output by 'data', 'area'. You can override using the `.groups` argument.
+
+[36m──[39m [1m[1mColumn specification[1m[22m [36m────────────────────────────────────────────────────────[39m
+cols(
+  nome = [31mcol_character()[39m,
+  NUTS2 = [31mcol_character()[39m,
+  area = [31mcol_character()[39m,
+  popolazione_2020 = [32mcol_double()[39m,
+  totale_pfizer = [32mcol_double()[39m,
+  totale_moderna = [32mcol_double()[39m,
+  totale_dosi = [32mcol_double()[39m,
+  dosi_ogni_mille = [32mcol_double()[39m
+)
+
+Error: New rows can't add columns.
+[31m✖[39m Can't find columns `prima_dose` and `seconda_dose` in `.data`.
+Backtrace:
+[90m    [39m█
+[90m 1. [39m├─base::source(file = "scripts_R/ita_get_vaccinations.R")
+[90m 2. [39m│ ├─base::withVisible(eval(ei, envir))
+[90m 3. [39m│ └─base::eval(ei, envir)
+[90m 4. [39m│   └─base::eval(ei, envir)
+[90m 5. [39m├─`%>%`(...)
+[90m 6. [39m├─dplyr::mutate(...)
+[90m 7. [39m├─dplyr::relocate(., nome, NUTS2, area, popolazione_2020)
+[90m 8. [39m├─dplyr::inner_join(., doses_by_area, by = "area")
+[90m 9. [39m└─tibble::add_row(...)
+Warning messages:
+1: Unknown or uninitialised column: `prima_dose`. 
+2: Unknown or uninitialised column: `seconda_dose`. 
+Execution halted
